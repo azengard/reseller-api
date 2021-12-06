@@ -50,6 +50,11 @@ INSTALLED_APPS = [
     'apps.api.reseller',
 ]
 
+if DEBUG:
+    INSTALLED_APPS += [
+        'django_extensions'
+    ]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -147,6 +152,6 @@ REST_FRAMEWORK = {
 }
 
 # Simple JWT
-SIMPLE_JWT = {
-    'USER_ID_FIELD': 'email'
-}
+# SIMPLE_JWT = {
+#     'USER_ID_FIELD': 'email'
+# }
