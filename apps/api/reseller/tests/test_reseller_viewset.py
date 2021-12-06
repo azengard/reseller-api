@@ -33,3 +33,27 @@ class TestResellerViewSet:
         response = api_client.post('/api/reseller/', data=reseller_data)
 
         assert 400 == response.status_code
+
+
+@pytest.mark.django_db
+class TestResellerLogin:
+    def test_get_reseller_get_token_with_success(self, api_client, reseller_data):
+        api_client.post('/api/reseller/', data=reseller_data)
+        response = api_client.post('/api/token/', data={'email': 'john.doe@email.com', 'password': 'secure-password'})
+
+        assert 200 == response.status_code
+
+        response_data = response.json()
+        assert 'access' in response_data.keys()
+        assert 'refresh' in response_data.keys()
+
+    def test_use_refresh_reseller_token_with_success(self, api_client, reseller_data):
+        api_client.post('/api/reseller/', data=reseller_data)
+        resp_token = api_client.post('/api/token/', data={'email': 'john.doe@email.com', 'password': 'secure-password'})
+        resp_token = resp_token.json()
+
+        response = api_client.post('/api/token/refresh/', data={'refresh': resp_token['refresh']})
+
+        assert 200 == response.status_code
+
+        assert response.json()['access'] != resp_token['access']
