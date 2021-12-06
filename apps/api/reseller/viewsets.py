@@ -1,7 +1,11 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from rest_framework.mixins import CreateModelMixin
+from rest_framework.viewsets import GenericViewSet
+
+from apps.api.reseller.serializers import ResellerSerializer
 
 
-@api_view(['GET'])
-def hello_world(request):
-    return Response({"message": "Hello, world!"})
+class ResellerViewSet(CreateModelMixin, GenericViewSet):
+    authentication_classes = ()
+    permission_classes = ()
+
+    serializer_class = ResellerSerializer

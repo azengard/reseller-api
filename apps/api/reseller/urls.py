@@ -1,8 +1,7 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
-from .viewsets import hello_world
+from .viewsets import ResellerViewSet
 
-
-urlpatterns = [
-    path('', hello_world)
-]
+router = DefaultRouter()
+router.register('', ResellerViewSet, basename='reseller')
+urlpatterns = router.urls
