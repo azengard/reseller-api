@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 
     'apps.api',
     'apps.api.reseller',
+    'apps.api.purchase',
 ]
 
 if DEBUG:
