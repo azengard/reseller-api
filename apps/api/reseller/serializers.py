@@ -7,3 +7,4 @@ class ResellerSerializer(ModelSerializer):
     class Meta:
         model = Reseller
         fields = ['email', 'first_name', 'last_name', 'cpf', 'password']
+        extra_kwargs = {'password': {'write_only': True}}

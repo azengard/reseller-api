@@ -19,7 +19,13 @@ class TestResellerViewSet:
         response = api_client.post('/api/reseller/', data=reseller_data)
 
         assert 201 == response.status_code
-        assert response.json() == reseller_data
+
+        assert response.json() == {
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'cpf': '123.456.789-10',
+            'email': 'john.doe@email.com'
+        }
 
     @pytest.mark.parametrize('field', ['first_name', 'last_name', 'cpf', 'email', 'password'])
     def test_create_reseller_failed_without_required_fields(self, field, api_client, reseller_data):

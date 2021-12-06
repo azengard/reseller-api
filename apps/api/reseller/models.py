@@ -31,6 +31,9 @@ class ResellerManager(BaseUserManager):
 
         return self._create_user(email, password, **extra_fields)
 
+    def create(self, **extra_fields):
+        return self.create_user(**extra_fields)
+
 
 class Reseller(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
