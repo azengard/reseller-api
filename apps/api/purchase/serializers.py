@@ -11,7 +11,7 @@ class PurchaseSerializer(ModelSerializer):
 
     class Meta:
         model = Purchase
-        fields = ['cpf', 'code', 'value', 'purchase_date', 'status']
+        fields = ['purchase_uuid', 'cpf', 'code', 'value', 'purchase_date', 'status']
 
     def validate(self, data):
         if data.get('reseller_cpf').cpf == Reseller.SPECIAL_RESELLER:

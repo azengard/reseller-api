@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 
 
@@ -7,6 +9,7 @@ class Purchase(models.Model):
         APPROVED = 'approved', "Aprovado"
         REPROVED = 'reproved', "Reprovado"
 
+    purchase_uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     reseller_cpf = models.ForeignKey('reseller.Reseller', related_name='purchases', on_delete=models.CASCADE,
                                      to_field='cpf')
     code = models.CharField(max_length=10)
