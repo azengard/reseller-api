@@ -56,4 +56,4 @@ class TestResellerLogin:
 
         assert 200 == response.status_code
 
-        assert response.json()['access'] != resp_token['access']
+        assert response.data['access'] != resp_token['access']
