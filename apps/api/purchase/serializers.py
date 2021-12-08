@@ -1,3 +1,4 @@
+from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer, FloatField
 
 from apps.api.purchase.models import Purchase
@@ -8,12 +9,27 @@ from apps.api.serializers import UniqueRelatedField
 class PurchaseSerializer(ModelSerializer):
     cpf = UniqueRelatedField(source='reseller_cpf', field_name='cpf', queryset=Reseller.objects.all(), required=True)
     value = FloatField()
+    cashback_percentage = SerializerMethodField(read_only=True)
+    cashback_value = SerializerMethodField(read_only=True)
 
     class Meta:
         model = Purchase
-        fields = ['purchase_uuid', 'cpf', 'code', 'value', 'purchase_date', 'status']
+        fields = ['purchase_uuid',
+                  'cpf',
+                  'code',
+                  'value',
+                  'purchase_date',
+                  'cashback_percentage',
+                  'cashback_value',
+                  'status']
 
     def validate(self, data):
         if data.get('reseller_cpf').cpf == Reseller.SPECIAL_RESELLER:
             data.update({'status': Purchase.PurchaseStatus.APPROVED})
         return data
+
+    def get_cashback_percentage(self, value):
+        return 'cashback_percentage'
+
+    def get_cashback_value(self, value):
+        return 'cashback_value'
