@@ -60,3 +60,10 @@ class TestPurchaseViewSet:
             'purchase_date': '2021-12-01',
             'status': 'validating'
         }
+
+    def test_delete_purchase_with_success(self, auth_api_client, purchase_data):
+        purchase_resp = auth_api_client.post('/api/purchase/', data=purchase_data)
+
+        response = auth_api_client.delete(f'/api/purchase/{purchase_resp.data["purchase_uuid"]}/')
+
+        assert 204 == response.status_code
