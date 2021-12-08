@@ -61,9 +61,27 @@ class TestPurchaseViewSet:
             'status': 'validating'
         }
 
+    @pytest.mark.parametrize('method', ['put', 'patch'])
+    def test_cannot_edit_purchase_if_status_is_not_validating(self, method, auth_api_client, purchase_data):
+        purchase_data = {**purchase_data, 'cpf': '153.509.460-56'}
+        purchase_resp = auth_api_client.post('/api/purchase/', data=purchase_data)
+
+        response = getattr(auth_api_client, method)(f'/api/purchase/{purchase_resp.data["purchase_uuid"]}/',
+                                                    data={**purchase_data, 'value': 2000.00})
+
+        assert 403 == response.status_code
+
     def test_delete_purchase_with_success(self, auth_api_client, purchase_data):
         purchase_resp = auth_api_client.post('/api/purchase/', data=purchase_data)
 
         response = auth_api_client.delete(f'/api/purchase/{purchase_resp.data["purchase_uuid"]}/')
 
         assert 204 == response.status_code
+
+    def test_cannot_delete_purchase_if_status_is_not_validating(self, auth_api_client, purchase_data):
+        purchase_data = {**purchase_data, 'cpf': '153.509.460-56'}
+        purchase_resp = auth_api_client.post('/api/purchase/', data=purchase_data)
+
+        response = auth_api_client.delete(f'/api/purchase/{purchase_resp.data["purchase_uuid"]}/')
+
+        assert 403 == response.status_code
