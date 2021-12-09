@@ -1,5 +1,5 @@
 from rest_framework.fields import SerializerMethodField
-from rest_framework.serializers import ModelSerializer, FloatField
+from rest_framework.serializers import ModelSerializer, FloatField, Serializer
 
 from apps.api.purchase.models import Purchase
 from apps.api.reseller.models import Reseller
@@ -33,3 +33,7 @@ class PurchaseSerializer(ModelSerializer):
 
     def get_cashback_value(self, obj):
         return obj.get_cashback_value()
+
+
+class CashbackResponse(Serializer):
+    pass

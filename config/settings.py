@@ -152,6 +152,9 @@ REST_FRAMEWORK = {
     )
 }
 
+CASHBACK_API_URL = config('CASHBACK_API_URL')
+CASHBACK_API_TOKEN = config('CASHBACK_API_TOKEN')
+
 # Simple JWT
 # SIMPLE_JWT = {
 #     'USER_ID_FIELD': 'email'
