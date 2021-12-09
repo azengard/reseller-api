@@ -17,3 +17,18 @@ class Purchase(models.Model):
     purchase_date = models.DateField()
     status = models.CharField(max_length=max(map(len, PurchaseStatus.values)),
                               choices=PurchaseStatus.choices, default=PurchaseStatus.VALIDATING)
+
+    def get_cashback_percentage(self):
+        value = float(self.value)
+        if value <= 1000:
+            percentage = 10.0
+        elif value <= 1500:
+            percentage = 15.0
+        else:
+            percentage = 20.0
+        return percentage
+
+    def get_cashback_value(self):
+        percentage = self.get_cashback_percentage()
+        cashback_value = (float(self.value) * percentage) / 100
+        return cashback_value

@@ -28,8 +28,8 @@ class PurchaseSerializer(ModelSerializer):
             data.update({'status': Purchase.PurchaseStatus.APPROVED})
         return data
 
-    def get_cashback_percentage(self, value):
-        return 'cashback_percentage'
+    def get_cashback_percentage(self, obj):
+        return obj.get_cashback_percentage()
 
-    def get_cashback_value(self, value):
-        return 'cashback_value'
+    def get_cashback_value(self, obj):
+        return obj.get_cashback_value()

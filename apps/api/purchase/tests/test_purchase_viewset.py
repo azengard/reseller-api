@@ -3,6 +3,8 @@ import unittest
 import pytest
 from model_bakery import baker
 
+from apps.api.purchase.models import Purchase
+
 
 @pytest.fixture
 def purchase_data():
@@ -31,21 +33,22 @@ class TestPurchaseViewSet:
             'code': purchase.code,
             'value': float(purchase.value),
             'purchase_date': str(purchase.purchase_date),
-            'cashback_percentage': 'cashback_percentage',
-            'cashback_value': 'cashback_value',
+            'cashback_percentage': purchase.get_cashback_percentage(),
+            'cashback_value': purchase.get_cashback_value(),
             'status': purchase.status
         }
 
     def test_list_purchase_with_success(self, auth_api_client):
-        purchases = []
         for _ in range(10):
             reseller = baker.make('reseller.Reseller')
-            purchases.append(baker.make('purchase.Purchase', reseller_cpf=reseller))
+            baker.make('purchase.Purchase', reseller_cpf=reseller)
 
         response = auth_api_client.get('/api/purchase/')
 
         assert 200 == response.status_code
         assert 10 == len(response.data)
+
+        purchases = Purchase.objects.all()
 
         case = unittest.TestCase()
         case.assertCountEqual(response.data, [
@@ -55,8 +58,8 @@ class TestPurchaseViewSet:
                 'code': purchase.code,
                 'value': float(purchase.value),
                 'purchase_date': str(purchase.purchase_date),
-                'cashback_percentage': 'cashback_percentage',
-                'cashback_value': 'cashback_value',
+                'cashback_percentage': purchase.get_cashback_percentage(),
+                'cashback_value': purchase.get_cashback_value(),
                 'status': purchase.status
             }
             for purchase in purchases
@@ -73,8 +76,8 @@ class TestPurchaseViewSet:
             'code': 'abc-123',
             'value': 1000.00,
             'purchase_date': '2021-12-01',
-            'cashback_percentage': 'cashback_percentage',
-            'cashback_value': 'cashback_value',
+            'cashback_percentage': 10.0,
+            'cashback_value': 100.00,
             'status': 'validating'
         }
 
@@ -90,8 +93,8 @@ class TestPurchaseViewSet:
             'code': 'abc-123',
             'value': 1000.00,
             'purchase_date': '2021-12-01',
-            'cashback_percentage': 'cashback_percentage',
-            'cashback_value': 'cashback_value',
+            'cashback_percentage': 10.0,
+            'cashback_value': 100.00,
             'status': 'approved'
         }
 
@@ -110,8 +113,8 @@ class TestPurchaseViewSet:
             'code': 'abc-123',
             'value': 2000.00,
             'purchase_date': '2021-12-01',
-            'cashback_percentage': 'cashback_percentage',
-            'cashback_value': 'cashback_value',
+            'cashback_percentage': 20.0,
+            'cashback_value': 400.00,
             'status': 'validating'
         }
 
@@ -139,3 +142,11 @@ class TestPurchaseViewSet:
         response = auth_api_client.delete(f'/api/purchase/{purchase_resp.data["purchase_uuid"]}/')
 
         assert 403 == response.status_code
+
+
+@pytest.mark.django_db
+class TestPurchaseViewSet:
+    def test_retrieve_purchase_with_success(self, auth_api_client):
+        response = auth_api_client.get(f'/api/purchase/cashback/', follow=True)
+
+        assert 200 == response.status_code
