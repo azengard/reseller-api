@@ -1,6 +1,5 @@
 import requests
 from django.conf import settings
-from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -8,7 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from apps.api.purchase.exceptions import PurchaseModifyForbiddenException
 from apps.api.purchase.models import Purchase
-from apps.api.purchase.serializers import PurchaseSerializer, CashbackResponse
+from apps.api.purchase.serializers import PurchaseSerializer, CashbackSerializer
 
 
 class PurchaseViewSet(ModelViewSet):
@@ -33,8 +32,8 @@ class PurchaseViewSet(ModelViewSet):
         url = settings.CASHBACK_API_URL
         headers = {'token': settings.CASHBACK_API_TOKEN}
         params = {'cpf': '12312312323'}
-        response = requests.get(url, params=params, headers=headers)
+        response = requests.get(url, params=params, headers=headers).json()
 
-        serializer = CashbackResponse(data={})
+        serializer = CashbackSerializer(data=response['body'])
         serializer.is_valid(raise_exception=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=response['statusCode'])

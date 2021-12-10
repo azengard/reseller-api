@@ -35,5 +35,5 @@ class PurchaseSerializer(ModelSerializer):
         return obj.get_cashback_value()
 
 
-class CashbackResponse(Serializer):
-    pass
+class CashbackSerializer(Serializer):
+    credit = FloatField()

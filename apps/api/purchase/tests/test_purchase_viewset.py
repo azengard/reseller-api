@@ -143,9 +143,6 @@ class TestPurchaseViewSet:
 
         assert 403 == response.status_code
 
-
-@pytest.mark.django_db
-class TestPurchaseViewSet:
     def test_retrieve_purchase_with_success(self, auth_api_client):
         response = auth_api_client.get(f'/api/purchase/cashback/', follow=True)
 
