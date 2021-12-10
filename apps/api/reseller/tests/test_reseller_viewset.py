@@ -6,7 +6,7 @@ def reseller_data():
     data = {
         'first_name': 'John',
         'last_name': 'Doe',
-        'cpf': '123.456.789-10',
+        'cpf': '333.257.650-09',
         'email': 'john.doe@email.com',
         'password': 'secure-password'
     }
@@ -23,9 +23,18 @@ class TestResellerViewSet:
         assert response.json() == {
             'first_name': 'John',
             'last_name': 'Doe',
-            'cpf': '123.456.789-10',
+            'cpf': '333.257.650-09',
             'email': 'john.doe@email.com'
         }
+
+    @pytest.mark.parametrize('invalid_cpf', ['using-letters', '111.111.111-11', '123321123321123',
+                                             '333^257.650c09', '333~257.650-00', '333.257.650-00'])
+    def test_create_reseller_failed_for_invalid_cpf(self, invalid_cpf, api_client, reseller_data):
+        reseller_data = {**reseller_data, 'cpf': invalid_cpf}
+        response = api_client.post('/api/reseller/', data=reseller_data)
+
+        assert 400 == response.status_code
+        assert response.json() == {'cpf': ['Invalid CPF']}
 
     @pytest.mark.parametrize('field', ['first_name', 'last_name', 'cpf', 'email', 'password'])
     def test_create_reseller_failed_without_required_fields(self, field, api_client, reseller_data):
@@ -33,6 +42,7 @@ class TestResellerViewSet:
         response = api_client.post('/api/reseller/', data=reseller_data)
 
         assert 400 == response.status_code
+        assert response.json() == {field: ['This field is required.']}
 
 
 @pytest.mark.django_db
