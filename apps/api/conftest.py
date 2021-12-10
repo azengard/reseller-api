@@ -12,7 +12,7 @@ def api_client():
 
 
 @pytest.fixture()
-def normal_reseller_data():
+def reseller_data():
     return {
         'first_name': 'Will',
         'last_name': 'Smith',
@@ -23,30 +23,31 @@ def normal_reseller_data():
 
 
 @pytest.fixture()
-def special_reseller_data(normal_reseller_data):
-    special_reseller_data = {**normal_reseller_data, 'email': 'special.reseller@email.com', 'cpf': '153.509.460-56'}
-    return special_reseller_data
+def special_reseller_data(reseller_data):
+    reseller_data.update({'email': 'special.reseller@email.com',
+                          'cpf': Reseller.SPECIAL_RESELLER})
+    return reseller_data
+
+
+@pytest.fixture
+def reseller(reseller_data):
+    return Reseller.objects.create_user(**reseller_data)
+
+
+@pytest.fixture
+def special_reseller(special_reseller_data):
+    return Reseller.objects.create_user(**special_reseller_data)
 
 
 @pytest.fixture()
-def resellers(normal_reseller_data, special_reseller_data):
-    normal_reseller = Reseller.objects.create_user(**normal_reseller_data)
-    special_reseller = Reseller.objects.create_user(**special_reseller_data)
-    resellers = [normal_reseller, special_reseller]
-    return resellers
-
-
-@pytest.fixture()
-def reseller_token(api_client, resellers):
-    response = api_client.post('/api/token/',
-                               data={'email': 'will.smith@email.com', 'password': 'secure-password'})
+def reseller_token(api_client, reseller):
+    response = api_client.post('/api/token/', data={'email': reseller.email, 'password': 'secure-password'})
     return response.data
 
 
 @pytest.fixture()
-def special_reseller_token(api_client, resellers):
-    response = api_client.post('/api/token/',
-                               data={'email': 'special.reseller@email.com', 'password': 'secure-password'})
+def special_reseller_token(api_client, special_reseller):
+    response = api_client.post('/api/token/', data={'email': special_reseller.email, 'password': 'secure-password'})
     return response.data
 
 
@@ -63,5 +64,5 @@ def auth_api_client_special_reseller(api_client, special_reseller_token):
 
 
 @pytest.fixture
-def reseller():
-    return baker.make('reseller.Reseller')
+def purchase(reseller):
+    return baker.make('purchase.Purchase', reseller_cpf=reseller)

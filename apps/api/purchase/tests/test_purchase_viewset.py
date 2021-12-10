@@ -19,10 +19,7 @@ def purchase_data():
 
 @pytest.mark.django_db
 class TestPurchaseViewSet:
-    def test_retrieve_purchase_with_success(self, auth_api_client):
-        reseller = baker.make('reseller.Reseller')
-        purchase = baker.make('purchase.Purchase', reseller_cpf=reseller)
-
+    def test_retrieve_purchase_with_success(self, auth_api_client, purchase):
         response = auth_api_client.get(f'/api/purchase/{str(purchase.purchase_uuid)}', follow=True)
 
         assert 200 == response.status_code
@@ -38,17 +35,20 @@ class TestPurchaseViewSet:
             'status': purchase.status
         }
 
-    def test_list_purchase_with_success(self, auth_api_client):
-        for _ in range(10):
-            reseller = baker.make('reseller.Reseller')
-            baker.make('purchase.Purchase', reseller_cpf=reseller)
+    def test_list_resellers_purchases_with_success(self, auth_api_client, reseller):
+        baker.make('purchase.Purchase', reseller_cpf=reseller, _quantity=5)
+
+        # Create more 15 purchases of others resellers
+        for _ in range(3):
+            other_resellers = baker.make('reseller.Reseller')
+            baker.make('purchase.Purchase', reseller_cpf=other_resellers, _quantity=5)
 
         response = auth_api_client.get('/api/purchase/')
 
         assert 200 == response.status_code
-        assert 10 == len(response.data)
+        assert 5 == len(response.data)
 
-        purchases = Purchase.objects.all()
+        purchases = Purchase.objects.filter(reseller_cpf=reseller)
 
         case = unittest.TestCase()
         case.assertCountEqual(response.data, [
@@ -98,16 +98,14 @@ class TestPurchaseViewSet:
         }
 
     @pytest.mark.parametrize('method', ['put', 'patch'])
-    def test_edit_purchase_with_success(self, method, auth_api_client, purchase_data):
-        purchase_resp = auth_api_client.post('/api/purchase/', data=purchase_data)
-
-        response = getattr(auth_api_client, method)(f'/api/purchase/{purchase_resp.data["purchase_uuid"]}/',
+    def test_edit_purchase_with_success(self, method, auth_api_client, purchase_data, purchase):
+        response = getattr(auth_api_client, method)(f'/api/purchase/{purchase.purchase_uuid}/',
                                                     data={**purchase_data, 'value': 2000.00})
 
         assert 200 == response.status_code
 
         assert response.json() == {
-            'purchase_uuid': purchase_resp.data['purchase_uuid'],
+            'purchase_uuid': str(purchase.purchase_uuid),
             'cpf': '109.876.543-21',
             'code': 'abc-123',
             'value': 2000.00,
@@ -128,10 +126,8 @@ class TestPurchaseViewSet:
 
         assert 403 == response.status_code
 
-    def test_delete_purchase_with_success(self, auth_api_client, purchase_data):
-        purchase_resp = auth_api_client.post('/api/purchase/', data=purchase_data)
-
-        response = auth_api_client.delete(f'/api/purchase/{purchase_resp.data["purchase_uuid"]}/')
+    def test_delete_purchase_with_success(self, auth_api_client, purchase):
+        response = auth_api_client.delete(f'/api/purchase/{purchase.purchase_uuid}/')
 
         assert 204 == response.status_code
 

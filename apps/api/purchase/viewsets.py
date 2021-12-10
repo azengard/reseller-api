@@ -8,6 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 from apps.api.purchase.exceptions import PurchaseModifyForbiddenException
 from apps.api.purchase.models import Purchase
 from apps.api.purchase.serializers import PurchaseSerializer, CashbackSerializer
+from apps.api.reseller.models import Reseller
 
 
 class PurchaseViewSet(ModelViewSet):
@@ -18,6 +19,12 @@ class PurchaseViewSet(ModelViewSet):
 
     lookup_field = 'purchase_uuid'
     lookup_url_kwarg = 'purchase_uuid'
+
+    def get_queryset(self):
+        cpf = self.request.auth['cpf']
+        reseller = Reseller.objects.get(cpf=cpf)
+        qs = reseller.purchases.all()
+        return qs
 
     def get_object(self):
         obj = super().get_object()
