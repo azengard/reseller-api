@@ -1,4 +1,4 @@
-from rest_framework.fields import SerializerMethodField
+from rest_framework.fields import SerializerMethodField, CharField
 from rest_framework.serializers import ModelSerializer, FloatField, Serializer
 
 from apps.api.purchase.models import Purchase
@@ -36,4 +36,5 @@ class PurchaseSerializer(ModelSerializer):
 
 
 class CashbackSerializer(Serializer):
-    credit = FloatField()
+    credit = FloatField(required=False)
+    message = CharField(required=False)

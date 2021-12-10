@@ -1,6 +1,7 @@
 import unittest
 
 import pytest
+from django.conf import settings
 from model_bakery import baker
 
 from apps.api.purchase.models import Purchase
@@ -143,7 +144,21 @@ class TestPurchaseViewSet:
 
         assert 403 == response.status_code
 
-    def test_retrieve_purchase_with_success(self, auth_api_client):
+    def test_retrieve_cashback_with_success(self, requests_mock, auth_api_client):
+        json_data = {"statusCode": 200, "body": {"credit": 3600}}
+        requests_mock.get(settings.CASHBACK_API_URL, json=json_data)
+
         response = auth_api_client.get(f'/api/purchase/cashback/', follow=True)
 
         assert 200 == response.status_code
+        assert response.data == {'credit': 3600}
+
+    def test_retrieve_cashback_error_message(self, requests_mock, auth_api_client):
+        json_data = {"statusCode": 400,
+                     "body": {"message": "CPF do revendedor(a) está incorreto, utilize apenas números!"}}
+        requests_mock.get(settings.CASHBACK_API_URL, json=json_data)
+
+        response = auth_api_client.get(f'/api/purchase/cashback/', follow=True)
+
+        assert 400 == response.status_code
+        assert response.data == {'message': 'CPF do revendedor(a) está incorreto, utilize apenas números!'}
