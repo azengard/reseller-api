@@ -97,6 +97,20 @@ class TestPurchaseViewSet:
             'status': 'approved'
         }
 
+    @pytest.mark.parametrize(('value', 'expected'), [(1000, 10.0), (1001, 15.0), (1500, 15.0), (1501, 20.0)])
+    def test_get_cashback_percentage(self, value, expected, auth_api_client, purchase_data, purchase):
+        purchase.value = value
+        purchase.save()
+
+        assert expected == purchase.get_cashback_percentage()
+
+    @pytest.mark.parametrize(('value', 'expected'), [(1000, 100.0), (1001, 150.15), (1500, 225.0), (1501, 300.2)])
+    def test_get_cashback_value(self, value, expected, auth_api_client, purchase_data, purchase):
+        purchase.value = value
+        purchase.save()
+
+        assert expected == purchase.get_cashback_value()
+
     @pytest.mark.parametrize('method', ['put', 'patch'])
     def test_edit_purchase_with_success(self, method, auth_api_client, purchase_data, purchase):
         response = getattr(auth_api_client, method)(f'/api/purchase/{purchase.purchase_uuid}/',
