@@ -10,7 +10,6 @@ from apps.api.purchase.models import Purchase
 @pytest.fixture
 def purchase_data():
     data = {
-        'cpf': '109.876.543-21',
         'code': 'abc-123',
         'value': 1000.00,
         'purchase_date': '2021-12-01',
@@ -82,9 +81,8 @@ class TestPurchaseViewSet:
             'status': 'validating'
         }
 
-    def test_create_pre_approved_purchase_with_success(self, auth_api_client, purchase_data):
-        purchase_data = {**purchase_data, 'cpf': '153.509.460-56'}
-        response = auth_api_client.post('/api/purchase/', data=purchase_data)
+    def test_create_pre_approved_purchase_with_success(self, auth_api_client_special_reseller, purchase_data):
+        response = auth_api_client_special_reseller.post('/api/purchase/', data=purchase_data)
 
         assert 201 == response.status_code
 
@@ -120,11 +118,12 @@ class TestPurchaseViewSet:
         }
 
     @pytest.mark.parametrize('method', ['put', 'patch'])
-    def test_cannot_edit_purchase_if_status_is_not_validating(self, method, auth_api_client, purchase_data):
-        purchase_data = {**purchase_data, 'cpf': '153.509.460-56'}
-        purchase_resp = auth_api_client.post('/api/purchase/', data=purchase_data)
+    @pytest.mark.parametrize('status', ['approved', 'reproved'])
+    def test_cannot_edit_purchase_if_status_is_not_validating(self, method, status, auth_api_client, purchase_data,
+                                                              reseller):
+        purchase = baker.make('purchase.Purchase', reseller_cpf=reseller, status=status)
 
-        response = getattr(auth_api_client, method)(f'/api/purchase/{purchase_resp.data["purchase_uuid"]}/',
+        response = getattr(auth_api_client, method)(f'/api/purchase/{purchase.purchase_uuid}/',
                                                     data={**purchase_data, 'value': 2000.00})
 
         assert 403 == response.status_code
@@ -136,11 +135,11 @@ class TestPurchaseViewSet:
 
         assert 204 == response.status_code
 
-    def test_cannot_delete_purchase_if_status_is_not_validating(self, auth_api_client, purchase_data):
-        purchase_data = {**purchase_data, 'cpf': '153.509.460-56'}
-        purchase_resp = auth_api_client.post('/api/purchase/', data=purchase_data)
+    @pytest.mark.parametrize('status', ['approved', 'reproved'])
+    def test_cannot_delete_purchase_if_status_is_not_validating(self, status, auth_api_client, purchase_data, reseller):
+        purchase = baker.make('purchase.Purchase', reseller_cpf=reseller, status=status)
 
-        response = auth_api_client.delete(f'/api/purchase/{purchase_resp.data["purchase_uuid"]}/')
+        response = auth_api_client.delete(f'/api/purchase/{purchase.purchase_uuid}/')
 
         assert 403 == response.status_code
 

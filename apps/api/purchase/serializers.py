@@ -1,13 +1,12 @@
+from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField, CharField
 from rest_framework.serializers import ModelSerializer, FloatField, Serializer
 
 from apps.api.purchase.models import Purchase
 from apps.api.reseller.models import Reseller
-from apps.api.serializers import UniqueRelatedField
 
 
 class PurchaseSerializer(ModelSerializer):
-    cpf = UniqueRelatedField(source='reseller_cpf', field_name='cpf', queryset=Reseller.objects.all(), required=True)
     value = FloatField()
     cashback_percentage = SerializerMethodField(read_only=True)
     cashback_value = SerializerMethodField(read_only=True)
@@ -22,9 +21,17 @@ class PurchaseSerializer(ModelSerializer):
                   'cashback_percentage',
                   'cashback_value',
                   'status']
+        extra_kwargs = {'cpf': {'source': 'reseller_cpf', 'read_only': True}}
 
     def validate(self, data):
-        if data.get('reseller_cpf').cpf == Reseller.SPECIAL_RESELLER:
+        try:
+            cpf = self.context['request'].auth['cpf']
+            reseller = Reseller.objects.get(cpf=cpf)
+            data['reseller_cpf'] = reseller
+        except Reseller.DoesNotExist:
+            raise ValidationError('Invalid Environment', 'does_not_exist')
+
+        if cpf == Reseller.SPECIAL_RESELLER:
             data.update({'status': Purchase.PurchaseStatus.APPROVED})
         return data
 

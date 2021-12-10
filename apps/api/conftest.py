@@ -1,4 +1,5 @@
 import pytest
+from model_bakery import baker
 from rest_framework.test import APIClient
 
 from apps.api.reseller.models import Reseller
@@ -37,7 +38,15 @@ def resellers(normal_reseller_data, special_reseller_data):
 
 @pytest.fixture()
 def reseller_token(api_client, resellers):
-    response = api_client.post('/api/token/', data={'email': 'will.smith@email.com', 'password': 'secure-password'})
+    response = api_client.post('/api/token/',
+                               data={'email': 'will.smith@email.com', 'password': 'secure-password'})
+    return response.data
+
+
+@pytest.fixture()
+def special_reseller_token(api_client, resellers):
+    response = api_client.post('/api/token/',
+                               data={'email': 'special.reseller@email.com', 'password': 'secure-password'})
     return response.data
 
 
@@ -45,3 +54,14 @@ def reseller_token(api_client, resellers):
 def auth_api_client(api_client, reseller_token):
     api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {reseller_token['access']}")
     return api_client
+
+
+@pytest.fixture
+def auth_api_client_special_reseller(api_client, special_reseller_token):
+    api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {special_reseller_token['access']}")
+    return api_client
+
+
+@pytest.fixture
+def reseller():
+    return baker.make('reseller.Reseller')

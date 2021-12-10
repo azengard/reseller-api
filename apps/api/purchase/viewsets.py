@@ -31,7 +31,11 @@ class PurchaseViewSet(ModelViewSet):
     def cashback(self, request, *args, **kwargs):
         url = settings.CASHBACK_API_URL
         headers = {'token': settings.CASHBACK_API_TOKEN}
-        params = {'cpf': '12312312323'}
+
+        cpf = request.auth.payload['cpf']
+        cpf = ''.join(char for char in cpf if char.isdigit())
+        params = {'cpf': cpf}
+
         response = requests.get(url, params=params, headers=headers).json()
 
         serializer = CashbackSerializer(data=response['body'])
