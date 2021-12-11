@@ -5,9 +5,9 @@ from django.db import models
 
 class Purchase(models.Model):
     class PurchaseStatus(models.TextChoices):
-        VALIDATING = 'validating', "Em validação"
-        APPROVED = 'approved', "Aprovado"
-        REPROVED = 'reproved', "Reprovado"
+        VALIDATING = 'validating'
+        APPROVED = 'approved'
+        REPROVED = 'reproved'
 
     purchase_uuid = models.UUIDField(default=uuid.uuid4, unique=True)
     reseller_cpf = models.ForeignKey('reseller.Reseller', related_name='purchases', on_delete=models.CASCADE,
