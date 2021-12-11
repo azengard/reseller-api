@@ -1,9 +1,13 @@
+import logging
+
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField, CharField
 from rest_framework.serializers import ModelSerializer, FloatField, Serializer
 
 from apps.api.purchase.models import Purchase
 from apps.api.reseller.models import Reseller
+
+log = logging.getLogger(__name__)
 
 
 class PurchaseSerializer(ModelSerializer):
@@ -29,9 +33,11 @@ class PurchaseSerializer(ModelSerializer):
             reseller = Reseller.objects.get(cpf=cpf)
             data['reseller_cpf'] = reseller
         except Reseller.DoesNotExist:
+            log.warning('Cannot execute purchase action: Reseller does not exist', extra={'cpf': cpf})
             raise ValidationError('Invalid Environment', 'does_not_exist')
 
         if cpf == Reseller.SPECIAL_RESELLER:
+            log.info('Purchase status modified to approved for special reseller', extra={'cpf': cpf})
             data.update({'status': Purchase.PurchaseStatus.APPROVED})
         return data
 

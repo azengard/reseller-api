@@ -1,7 +1,11 @@
+import logging
+
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
+
+log = logging.getLogger(__name__)
 
 
 class ResellerManager(BaseUserManager):
@@ -17,6 +21,7 @@ class ResellerManager(BaseUserManager):
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+        log.info('New reseller created', extra={'cpf': user.cpf})
         return user
 
     def create_user(self, email, password=None, **extra_fields):

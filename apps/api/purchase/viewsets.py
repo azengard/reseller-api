@@ -1,3 +1,5 @@
+import logging
+
 import requests
 from django.conf import settings
 from rest_framework.decorators import action
@@ -9,6 +11,8 @@ from apps.api.purchase.exceptions import PurchaseModifyForbiddenException
 from apps.api.purchase.models import Purchase
 from apps.api.purchase.serializers import PurchaseSerializer, CashbackSerializer
 from apps.api.reseller.models import Reseller
+
+log = logging.getLogger(__name__)
 
 
 class PurchaseViewSet(ModelViewSet):
@@ -31,6 +35,7 @@ class PurchaseViewSet(ModelViewSet):
 
         if (obj is not None) and (self.action in ['update', 'partial_update', 'destroy']):
             if obj.status != Purchase.PurchaseStatus.VALIDATING:
+                log.warning('Reseller are not allowed to modify a purchase', extra={'cpf': obj.reseller_cpf_id})
                 raise PurchaseModifyForbiddenException()
         return obj
 
@@ -43,6 +48,7 @@ class PurchaseViewSet(ModelViewSet):
         cpf = ''.join(char for char in cpf if char.isdigit())
         params = {'cpf': cpf}
 
+        log.info("Calling API to retrieve total reseller's cashback value", extra={'cpf': cpf})
         response = requests.get(url, params=params, headers=headers).json()
 
         serializer = CashbackSerializer(data=response['body'])
