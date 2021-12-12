@@ -1,0 +1,54 @@
+version: '3.3'
+
+volumes:
+    postgres_data: {}
+
+services:
+  postgres:
+    container_name: postgres_reseller_api
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - reseller-api-net
+    ports:
+      - "5432:5432"
+    env_file: .env
+
+  backend:
+    container_name: backend_reseller_api
+    build:
+      context: .
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    networks:
+      - reseller-api-net
+    command: /gunicorn.sh
+    entrypoint: /entrypoint.sh
+    restart: on-failure
+    env_file: .env
+
+  nginx:
+    container_name: nginx_reseller_api
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    networks:
+      - reseller-api-net
+    ports:
+      - "8000:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./media/:/media/
+      - ./staticfiles/:/staticfiles/
+      - ./nginx/prod.conf:/etc/nginx/nginx.conf:ro
+
+networks:
+  reseller-api-net:
+    name: reseller-api-net
+    ipam:
+      config:
+      - subnet: 182.21.0.0/16

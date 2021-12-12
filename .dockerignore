@@ -16,5 +16,4 @@ coverage.xml
 *.log
 .git*
 tests
-scripts
 ./postgres-data
