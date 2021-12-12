@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "reseller-api"
 version = "0.1.0"
-description = "API to manage reseller's cashback"
+description = "API to manage reseller's purchase and cashback"
 authors = ["Carlos Gonçalves <carlos.empre@yahoo.com>"]
 license = "MIT"
 
