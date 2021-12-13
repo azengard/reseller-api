@@ -37,4 +37,4 @@ networks:
     name: reseller-api-net
     ipam:
       config:
-      - subnet: 182.21.0.0/16
+      - subnet: 182.21.0.0/4

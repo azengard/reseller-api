@@ -25,6 +25,12 @@ docker-compose up
 docker-compose -f docker-compose-prod.yml up
 ```
 
+Important!
+In case you can't connect local with the docker container may be necessary declare the network postgres key at `/etc/hosts` file
+```
+127.0.0.1       localhost postgres
+```
+
 After the containers are up and running you can access the api at: [http://localhost:8000/api/](http://localhost:8000/api/)
 
 You can also use the application with the OpenAPI documentation: [http://localhost:8000/api/docs/](http://localhost:8000/api/docs/)
