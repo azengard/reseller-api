@@ -2,10 +2,10 @@
 
 DRF API to manage reseller's purchase and cashback
 
-### Version
+## Version
 1.0
 
-### How set up and run the project
+## How set up and run the project
 
 1. Configure project.
 ```console
@@ -25,10 +25,9 @@ docker-compose up
 docker-compose -f docker-compose-prod.yml up
 ```
 
-After the containers are up and running you can access the api at [http://localhost:8000/api/](http://localhost:8000/api/)
+After the containers are up and running you can access the api at: [http://localhost:8000/api/](http://localhost:8000/api/)
 
-You can also use the application with the 
-[OpenAPI documentation](http://localhost:8000/api/docs/)
+You can also use the application with the OpenAPI documentation: [http://localhost:8000/api/docs/](http://localhost:8000/api/docs/)
 
 
 3. Run project locally
@@ -51,25 +50,25 @@ python manage.py runserver
 pytest
 ```
 
-### Docker services
+## Docker services
 
-####Backend
+### Backend
 * Django application, serve de API and communicate with database.
 ```console
 docker-compose up backend
 ```
 
-####NGINX
+### NGINX
 * Used to serve the Swagger application and redirect requests to Backend.
 ```console
 docker-compose up nginx
 ```
 
-####Postgres
+### Postgres
 * A robust and secure database.
 ```console
 docker-compose up postgres
 ```
 
-### API
+## API
 **Basepath: http://localhost:8000/api/**
