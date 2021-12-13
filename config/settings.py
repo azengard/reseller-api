@@ -167,18 +167,14 @@ REST_FRAMEWORK = {
     )
 }
 
-CASHBACK_API_URL = config('CASHBACK_API_URL')
-CASHBACK_API_TOKEN = config('CASHBACK_API_TOKEN')
-
-
 SWAGGER_SETTINGS = {
-   'SECURITY_DEFINITIONS': {
-      'Bearer': {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header'
-      }
-   }
+        }
+    }
 }
 
 # Configure logging
@@ -212,3 +208,8 @@ LOGGING = {
         }
     }
 }
+
+# Business
+SPECIAL_RESELLER = config('SPECIAL_RESELLER')
+CASHBACK_API_URL = config('CASHBACK_API_URL')
+CASHBACK_API_TOKEN = config('CASHBACK_API_TOKEN')

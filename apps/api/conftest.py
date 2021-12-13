@@ -1,4 +1,5 @@
 import pytest
+from django.conf import settings
 from model_bakery import baker
 from rest_framework.test import APIClient
 
@@ -25,7 +26,7 @@ def reseller_data():
 @pytest.fixture()
 def special_reseller_data(reseller_data):
     reseller_data.update({'email': 'special.reseller@email.com',
-                          'cpf': Reseller.SPECIAL_RESELLER})
+                          'cpf': settings.SPECIAL_RESELLER})
     return reseller_data
 
 

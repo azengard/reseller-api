@@ -41,8 +41,6 @@ class ResellerManager(BaseUserManager):
 
 
 class Reseller(AbstractBaseUser, PermissionsMixin):
-    SPECIAL_RESELLER = '153.509.460-56'
-
     email = models.EmailField(unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)

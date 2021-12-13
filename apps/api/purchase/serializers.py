@@ -1,5 +1,6 @@
 import logging
 
+from django.conf import settings
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import SerializerMethodField, CharField
 from rest_framework.serializers import ModelSerializer, FloatField, Serializer
@@ -36,7 +37,7 @@ class PurchaseSerializer(ModelSerializer):
             log.warning('Cannot execute purchase action: Reseller does not exist', extra={'cpf': cpf})
             raise ValidationError('Invalid Environment', 'does_not_exist')
 
-        if cpf == Reseller.SPECIAL_RESELLER:
+        if cpf == settings.SPECIAL_RESELLER:
             log.info('Purchase status modified to approved for special reseller', extra={'cpf': cpf})
             data.update({'status': Purchase.PurchaseStatus.APPROVED})
         return data
