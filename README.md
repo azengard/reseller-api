@@ -82,3 +82,13 @@ docker-compose up postgres
 
 ## API
 **Basepath: http://localhost:8000/api/**
+
+#### Reseller `\api\reseller`
+Reseller are the main user of the API, you need create a Reseller account in order to add use the API
+
+#### Purchase `\api\purchase`
+Purchase has all endpoints to create, edit, delete a purchase, you can also retrieve the Reseller's cashback
+
+#### Token `\api\token`
+Token are used to get access token and refresh a JWT Token, you need pass the access Token in the 
+header "Authorization" to use all the Purchases endpoints, using the following pattern `Bearer <access token>`
