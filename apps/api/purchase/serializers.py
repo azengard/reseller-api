@@ -26,7 +26,9 @@ class PurchaseSerializer(ModelSerializer):
                   'cashback_percentage',
                   'cashback_value',
                   'status']
-        extra_kwargs = {'cpf': {'source': 'reseller_cpf', 'read_only': True}}
+        extra_kwargs = {'purchase_uuid': {'read_only': True},
+                        'status': {'read_only': True},
+                        'cpf': {'source': 'reseller_cpf', 'read_only': True}}
 
     def validate(self, data):
         try:
