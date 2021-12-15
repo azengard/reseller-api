@@ -14,4 +14,5 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
+    """Retrieve a Reseller's access and refresh JWT Token"""
     serializer_class = CustomTokenObtainPairSerializer

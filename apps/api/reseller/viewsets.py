@@ -9,3 +9,7 @@ class ResellerViewSet(CreateModelMixin, GenericViewSet):
     permission_classes = ()
 
     serializer_class = ResellerSerializer
+
+    def create(self, request, *args, **kwargs):
+        """Create the Reseller's API user, the Reseller are used to log in and perform purchase actions"""
+        return super().create(request, *args, **kwargs)

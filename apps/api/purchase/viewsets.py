@@ -39,8 +39,33 @@ class PurchaseViewSet(ModelViewSet):
                 raise PurchaseModifyForbiddenException()
         return obj
 
+    def list(self, request, *args, **kwargs):
+        """List all Reseller's Purchases"""
+        return super().list(request, *args, **kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        """Retrieve a Purchase"""
+        return super().retrieve(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        """Create a new Purchase"""
+        return super().create(request, *args, **kwargs)
+
+    def update(self, request, *args, **kwargs):
+        """Update a Purchase, this action is available only if purchase status are 'validating'"""
+        return super().update(request, *args, **kwargs)
+
+    def partial_update(self, request, *args, **kwargs):
+        """Partial Update a Purchase, this action is available only if purchase status are 'validating'"""
+        return super().partial_update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        """Delete a Purchase, this action is available only if purchase status are 'validating'"""
+        return super().destroy(request, *args, **kwargs)
+
     @action(detail=False, methods=['GET'])
     def cashback(self, request, *args, **kwargs):
+        """Retrieve the total cashback value earned by the Reseller"""
         url = settings.CASHBACK_API_URL
         headers = {'token': settings.CASHBACK_API_TOKEN}
 
