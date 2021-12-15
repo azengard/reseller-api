@@ -33,7 +33,11 @@ In case you can't connect local with the docker container may be necessary decla
 
 After the containers are up and running you can access the api at: [http://localhost:8000/api/](http://localhost:8000/api/)
 
-You can also use the application with the OpenAPI documentation: [http://localhost:8000/api/docs/](http://localhost:8000/api/docs/)
+You can also use the application with the OpenAPI documentation:
+[http://localhost:8000/api/docs/](http://localhost:8000/api/docs/)
+
+* [OpenAPI docs](http://localhost:8000/api/docs) `http://<basename>/api/docs/`
+* [OpenAPI Json docs](http://localhost:8000/docs.json) `http://<basename>/api/docs/?format=openapi`
 
 
 3. Run project locally
